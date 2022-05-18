@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/fe-vm/static/js/main.cdb01f2f.js",
+    "main.js": "/fe-vm/static/js/main.419d03c7.js",
     "index.html": "/fe-vm/index.html",
-    "main.cdb01f2f.js.map": "/fe-vm/static/js/main.cdb01f2f.js.map"
+    "main.419d03c7.js.map": "/fe-vm/static/js/main.419d03c7.js.map"
   },
   "entrypoints": [
-    "static/js/main.cdb01f2f.js"
+    "static/js/main.419d03c7.js"
   ]
 }
