@@ -14,7 +14,10 @@ export const StyledItemName = styled.div`
   width: 140px;
   height: 120px;
   font-size: 26px;
-  border: 1px solid ${({ theme, boxColor }) => theme.color[boxColor]};
+  border: 1px solid ${({ theme }) => theme.color.gray};
+  &[data-click='true'] {
+    border: 1px solid ${({ theme }) => theme.color.red};
+  }
 
   p {
     margin-top: 10px;

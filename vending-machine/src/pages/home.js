@@ -5,22 +5,13 @@ import { LogProvider } from '../context/logProvider';
 import { InputMoneyProvider } from '../context/inputMoneyProvider';
 import { ProgressProvider } from '../context/progressProvider';
 import { PaybackTimerProvider } from '../context/paybackTimerProvider';
+import { ItemProvider } from '../context/itemProvider';
 
 export function Home() {
   return (
     <>
       <SwitchBox />
-      <WalletProvider>
-        <LogProvider>
-          <InputMoneyProvider>
-            <ProgressProvider>
-              <PaybackTimerProvider>
-                <Outlet />
-              </PaybackTimerProvider>
-            </ProgressProvider>
-          </InputMoneyProvider>
-        </LogProvider>
-      </WalletProvider>
+
     </>
   );
 }

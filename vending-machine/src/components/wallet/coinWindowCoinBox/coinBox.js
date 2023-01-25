@@ -8,7 +8,7 @@ import { LogContext } from '../../../context/logProvider';
 export function CoinBox({ coinInfo }) {
   const { decrementCoin } = useContext(WalletContext);
   const { setInputMoney } = useContext(InputMoneyContext);
-  const { setLogList } = useContext(LogContext);
+  const { logInputMoney } = useContext(LogContext);
 
   function handleClick() {
     if (coinInfo.quantity > 0) {
@@ -16,11 +16,6 @@ export function CoinBox({ coinInfo }) {
       setInputMoney(inputMoney => inputMoney + coinInfo.coin);
       logInputMoney(coinInfo.coin);
     }
-  }
-
-  function logInputMoney(currentInputMoney) {
-    const log = `${getWonTemplate(currentInputMoney)} 투입됨.`;
-    setLogList(logList => [...logList, log]);
   }
 
   return (

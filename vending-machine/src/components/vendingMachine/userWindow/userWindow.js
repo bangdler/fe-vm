@@ -18,20 +18,24 @@ import { WalletContext } from '../../../context/walletProvider';
 
 export function UserWindow() {
   const { inputMoney, setInputMoney } = useContext(InputMoneyContext);
-  const { setLogList } = useContext(LogContext);
+  const { logInputMoney, logPayback } = useContext(LogContext);
   const { inProgress } = useContext(ProgressContext);
-  const { paybackTimer, setPaybackTimer } = useContext(PaybackTimerContext);
-  const { walletInfo, decrementCoin, incrementCoin } = useContext(WalletContext);
+  const { paybackTimer, startPaybackTimer, stopPaybackTimer } = useContext(PaybackTimerContext);
+  const { walletInfo, decrementCoin, incrementCoin, putServerCoins } = useContext(WalletContext);
 
   useEffect(() => {
     if (inputMoney === 0) return;
-    stopPaybackTimer();
-    startPaybackTimer();
-  }, [inputMoney]);
+    if (inProgress) {
+      stopPaybackTimer();
+      return;
+    }
+    startPaybackTimer(PAYBACK_TIME, doPaybackProcess);
+  }, [inputMoney, inProgress]);
 
   function handleKeyPress(e) {
     if (inProgress) return;
     if (e.key !== 'Enter') return;
+    if (e.target.value <= 0) return;
     const inputValue = e.target.value.replace(',', '');
     doMoneyInputProcess(Number(inputValue));
 
@@ -100,30 +104,16 @@ export function UserWindow() {
   }
 
   function handleClickRepaymentBtn() {
-    if (paybackTimer === null) {
-      startPaybackTimer();
-    }
-  }
-
-  function startPaybackTimer() {
-    const getPaybackTimer = () => {
-      let timer = setTimeout(doPaybackProcess, PAYBACK_TIME);
-      return timer;
-    };
-    setPaybackTimer(getPaybackTimer());
-  }
-
-  function stopPaybackTimer() {
-    if (paybackTimer !== null) {
-      setPaybackTimer(timer => clearTimeout(timer));
+    if (paybackTimer.current !== null) {
+      stopPaybackTimer();
+      startPaybackTimer(PAYBACK_TIME / 2, doPaybackProcess);
     }
   }
 
   function doPaybackProcess() {
     putMoneyInWallet(inputMoney);
-    logPaybackMoney();
+    logPayback(inputMoney);
     setInputMoney(0);
-    setPaybackTimer(null);
   }
 
   function putMoneyInWallet(currentInputMoney) {
@@ -139,17 +129,6 @@ export function UserWindow() {
       }
       changedMoney -= curCoin * possibleNumOfCurCoin;
     }
-  }
-
-  function logInputMoney(currentInputMoney) {
-    const log = `${getWonTemplate(currentInputMoney)} 투입됨.`;
-    setLogList(logList => [...logList, log]);
-  }
-
-  function logPaybackMoney() {
-    if (inputMoney === 0) return;
-    const log = `잔돈 ${getWonTemplate(inputMoney)} 반환됨.`;
-    setLogList(logList => [...logList, log]);
   }
 
   return (

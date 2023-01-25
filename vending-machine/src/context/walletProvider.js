@@ -1,12 +1,20 @@
-import { createContext, useState } from 'react';
-import { walletData } from '../db/data';
+import { createContext, useEffect, useState } from 'react';
+import { fetchData } from '../helper/utils';
 
 export const WalletContext = createContext([]);
 
 export function WalletProvider({ children }) {
-  const [walletInfo, setWalletInfo] = useState(walletData);
+  const [walletInfo, setWalletInfo] = useState([]);
 
-  function incrementCoin(coin) {
+  useEffect(() => {
+    const setData = async () => {
+      const coinData = await fetchData(`${process.env.REACT_APP_API_SERVER}/coins`, { method: 'GET' });
+      setWalletInfo(coinData);
+    };
+    setData();
+  }, []);
+
+  const incrementCoin = coin => {
     setWalletInfo(prevWalletInfo =>
       prevWalletInfo.map(currentCoin => {
         if (currentCoin.coin === coin) {
@@ -15,9 +23,9 @@ export function WalletProvider({ children }) {
         return currentCoin;
       })
     );
-  }
+  };
 
-  function decrementCoin(coin) {
+  const decrementCoin = coin => {
     setWalletInfo(prevWalletInfo =>
       prevWalletInfo.map(currentCoin => {
         if (currentCoin.coin === coin) {
@@ -26,9 +34,11 @@ export function WalletProvider({ children }) {
         return currentCoin;
       })
     );
-  }
+  };
 
   return (
-    <WalletContext.Provider value={{ walletInfo, incrementCoin, decrementCoin }}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={{ walletInfo, incrementCoin, decrementCoin, putServerCoins }}>
+      {children}
+    </WalletContext.Provider>
   );
 }

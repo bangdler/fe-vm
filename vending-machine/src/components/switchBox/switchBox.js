@@ -1,30 +1,26 @@
 import { StyledContainer, StyledBtn } from './swtichBox.styled';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function SwitchBox() {
-  const [clickedTab, setClickedTab] = useState('자판기');
+  const navigate = useNavigate()
+  const location = useLocation()
 
   function clickVendingMachine() {
-    setClickedTab('자판기');
+    navigate('/')
   }
 
   function clickWallet() {
-    setClickedTab('지갑');
+    navigate('/myWallet')
   }
 
   return (
     <StyledContainer>
-      <Link to="vendingMachine">
-        <StyledBtn onClick={clickVendingMachine} clickedTab={clickedTab} curTab="자판기">
+        <StyledBtn onClick={clickVendingMachine} select={location.pathname === '/'}>
           자판기
         </StyledBtn>
-      </Link>
-      <Link to="myWallet">
-        <StyledBtn onClick={clickWallet} clickedTab={clickedTab} curTab="지갑">
+        <StyledBtn onClick={clickWallet} select={location.pathname === '/myWallet'}>
           지갑
         </StyledBtn>
-      </Link>
     </StyledContainer>
   );
 }

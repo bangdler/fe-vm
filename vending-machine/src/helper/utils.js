@@ -20,3 +20,13 @@ export function getWonTemplate(number) {
 export function delay(time) {
   return new Promise(res => setTimeout(() => res(), time));
 }
+
+export const debounce = (callback, delay) => {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback.apply(this, args);
+    }, delay);
+  };
+};
