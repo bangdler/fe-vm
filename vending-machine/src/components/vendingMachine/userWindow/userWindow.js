@@ -21,14 +21,14 @@ export function UserWindow() {
   const { logInputMoney, logPayback } = useContext(LogContext);
   const { inProgress } = useContext(ProgressContext);
   const { paybackTimer, startPaybackTimer, stopPaybackTimer } = useContext(PaybackTimerContext);
-  const { walletInfo, decrementCoin, incrementCoin, putServerCoins } = useContext(WalletContext);
+  const { walletInfo, decrementCoin, incrementCoin } = useContext(WalletContext);
 
   useEffect(() => {
-    if (inputMoney === 0) return;
     if (inProgress) {
       stopPaybackTimer();
       return;
     }
+    stopPaybackTimer();
     startPaybackTimer(PAYBACK_TIME, doPaybackProcess);
   }, [inputMoney, inProgress]);
 
@@ -52,6 +52,7 @@ export function UserWindow() {
   function doMoneyInputProcess(keyboardInputMoney) {
     const currentPossibleCoinObj = getPossibleCoin(keyboardInputMoney);
     const currentInputMoney = getCurrentInputMoney(currentPossibleCoinObj);
+    // TODO: 비동기 로직 분리
     takeMoneyOutOfWallet(currentPossibleCoinObj);
     setInputMoney(inputMoney => inputMoney + currentInputMoney);
     logInputMoney(currentInputMoney);
@@ -62,43 +63,33 @@ export function UserWindow() {
     // 1의 자리 제거
     changedMoney = Math.floor(inputMoney / 10) * 10;
 
-    const possibleCoinObj = {
-      10: 0,
-      100: 0,
-      500: 0,
-      1000: 0,
-      5000: 0,
-      10000: 0,
-    };
+    const possibleCoinObj = {};
 
     for (let i = walletInfo.length - 1; i >= 0; i--) {
-      let curCoin = walletInfo[i].coin;
-      if (curCoin > changedMoney) continue;
+      let curCoin = walletInfo[i];
+      if (curCoin.coin > changedMoney) continue;
 
-      let requiredNumOfCurCoin = Math.floor(changedMoney / curCoin);
+      let requiredNumOfCurCoin = Math.floor(changedMoney / curCoin.coin);
       let possibleNumOfCurCoin =
         requiredNumOfCurCoin > walletInfo[i].quantity ? walletInfo[i].quantity : requiredNumOfCurCoin;
-      possibleCoinObj[curCoin] = possibleNumOfCurCoin;
-      changedMoney -= curCoin * possibleNumOfCurCoin;
+      possibleCoinObj[curCoin.id] = possibleNumOfCurCoin;
+      changedMoney -= curCoin.coin * possibleNumOfCurCoin;
     }
-
     return possibleCoinObj;
   }
 
   function takeMoneyOutOfWallet(coinObj) {
-    for (let coin in coinObj) {
-      let requiredNum = coinObj[coin];
-      for (let i = 0; i < requiredNum; i++) {
-        decrementCoin(Number(coin));
-      }
+    for (let coinId in coinObj) {
+      let requiredNum = coinObj[coinId];
+      decrementCoin(coinId, requiredNum);
     }
   }
 
   function getCurrentInputMoney(coinObj) {
     let currentInputMoney = 0;
-    for (let coin in coinObj) {
-      let requiredNum = coinObj[coin];
-      currentInputMoney += coin * requiredNum;
+    for (let coinId in coinObj) {
+      let requiredNum = coinObj[coinId];
+      currentInputMoney += walletInfo[coinId].coin * requiredNum;
     }
     return currentInputMoney;
   }
@@ -111,6 +102,8 @@ export function UserWindow() {
   }
 
   function doPaybackProcess() {
+    if (inputMoney === 0) return;
+    // TODO: 비동기 로직 분리
     putMoneyInWallet(inputMoney);
     logPayback(inputMoney);
     setInputMoney(0);
@@ -124,9 +117,7 @@ export function UserWindow() {
       if (curCoin > changedMoney) continue;
 
       let possibleNumOfCurCoin = Math.floor(changedMoney / curCoin);
-      for (let i = 0; i < possibleNumOfCurCoin; i++) {
-        incrementCoin(curCoin);
-      }
+      incrementCoin(walletInfo[i].id, possibleNumOfCurCoin);
       changedMoney -= curCoin * possibleNumOfCurCoin;
     }
   }

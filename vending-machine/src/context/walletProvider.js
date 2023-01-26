@@ -14,22 +14,32 @@ export function WalletProvider({ children }) {
     setData();
   }, []);
 
-  const incrementCoin = coin => {
+  const incrementCoin = async (coinId, num) => {
+    await fetchData(`${process.env.REACT_APP_API_SERVER}/coins/${coinId}`, {
+      method: 'PATCH',
+      bodyData: { quantity: walletInfo[coinId].quantity + num },
+    });
+
     setWalletInfo(prevWalletInfo =>
       prevWalletInfo.map(currentCoin => {
-        if (currentCoin.coin === coin) {
-          return { ...currentCoin, quantity: currentCoin.quantity + 1 };
+        if (currentCoin.id === +coinId) {
+          return { ...currentCoin, quantity: currentCoin.quantity + num };
         }
         return currentCoin;
       })
     );
   };
 
-  const decrementCoin = coin => {
+  const decrementCoin = async (coinId, num) => {
+    await fetchData(`${process.env.REACT_APP_API_SERVER}/coins/${coinId}`, {
+      method: 'PATCH',
+      bodyData: { quantity: walletInfo[coinId].quantity - num },
+    });
+
     setWalletInfo(prevWalletInfo =>
       prevWalletInfo.map(currentCoin => {
-        if (currentCoin.coin === coin) {
-          return { ...currentCoin, quantity: currentCoin.quantity - 1 };
+        if (currentCoin.id === +coinId) {
+          return { ...currentCoin, quantity: currentCoin.quantity - num };
         }
         return currentCoin;
       })
@@ -37,8 +47,6 @@ export function WalletProvider({ children }) {
   };
 
   return (
-    <WalletContext.Provider value={{ walletInfo, incrementCoin, decrementCoin, putServerCoins }}>
-      {children}
-    </WalletContext.Provider>
+    <WalletContext.Provider value={{ walletInfo, incrementCoin, decrementCoin }}>{children}</WalletContext.Provider>
   );
 }

@@ -16,13 +16,13 @@
       "id": "2",
       "name": "햄",
       "price": "1000",
-      "stock": 2
+      "stock": 0
     },
     {
       "id": "3",
       "name": "도토리",
       "price": "1000",
-      "stock": 2
+      "stock": 0
     },
     {
       "id": "4",
@@ -40,13 +40,13 @@
       "id": "6",
       "name": "머핀",
       "price": "1000",
-      "stock": "2"
+      "stock": 1
     },
     {
       "id": "7",
       "name": "마이쮸",
       "price": "1000",
-      "stock": 2
+      "stock": 1
     },
     {
       "id": "8",
@@ -74,12 +74,12 @@
     {
       "id": 3,
       "coin": 500,
-      "quantity": 5
+      "quantity": 1
     },
     {
       "id": 4,
       "coin": 1000,
-      "quantity": 5
+      "quantity": 1
     },
     {
       "id": 5,

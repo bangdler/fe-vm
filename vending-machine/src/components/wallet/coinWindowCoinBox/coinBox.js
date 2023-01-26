@@ -12,7 +12,8 @@ export function CoinBox({ coinInfo }) {
 
   function handleClick() {
     if (coinInfo.quantity > 0) {
-      decrementCoin(coinInfo.coin);
+      // TODO: 비동기 로직 분리
+      decrementCoin(coinInfo.id, 1);
       setInputMoney(inputMoney => inputMoney + coinInfo.coin);
       logInputMoney(coinInfo.coin);
     }
