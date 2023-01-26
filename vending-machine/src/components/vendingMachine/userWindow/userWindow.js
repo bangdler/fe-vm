@@ -49,11 +49,10 @@ export function UserWindow() {
     }
   }
 
-  function doMoneyInputProcess(keyboardInputMoney) {
+  async function doMoneyInputProcess(keyboardInputMoney) {
     const currentPossibleCoinObj = getPossibleCoin(keyboardInputMoney);
     const currentInputMoney = getCurrentInputMoney(currentPossibleCoinObj);
-    // TODO: 비동기 로직 분리
-    takeMoneyOutOfWallet(currentPossibleCoinObj);
+    await takeMoneyOutOfWallet(currentPossibleCoinObj);
     setInputMoney(inputMoney => inputMoney + currentInputMoney);
     logInputMoney(currentInputMoney);
   }
@@ -78,10 +77,10 @@ export function UserWindow() {
     return possibleCoinObj;
   }
 
-  function takeMoneyOutOfWallet(coinObj) {
+  async function takeMoneyOutOfWallet(coinObj) {
     for (let coinId in coinObj) {
       let requiredNum = coinObj[coinId];
-      decrementCoin(coinId, requiredNum);
+      await decrementCoin(coinId, requiredNum);
     }
   }
 
@@ -101,23 +100,21 @@ export function UserWindow() {
     }
   }
 
-  function doPaybackProcess() {
+  async function doPaybackProcess() {
     if (inputMoney === 0) return;
-    // TODO: 비동기 로직 분리
-    putMoneyInWallet(inputMoney);
+    await putMoneyInWallet(inputMoney);
     logPayback(inputMoney);
     setInputMoney(0);
   }
 
-  function putMoneyInWallet(currentInputMoney) {
+  async function putMoneyInWallet(currentInputMoney) {
     let changedMoney = currentInputMoney;
-
     for (let i = walletInfo.length - 1; i >= 0; i--) {
       let curCoin = walletInfo[i].coin;
       if (curCoin > changedMoney) continue;
 
       let possibleNumOfCurCoin = Math.floor(changedMoney / curCoin);
-      incrementCoin(walletInfo[i].id, possibleNumOfCurCoin);
+      await incrementCoin(walletInfo[i].id, possibleNumOfCurCoin);
       changedMoney -= curCoin * possibleNumOfCurCoin;
     }
   }

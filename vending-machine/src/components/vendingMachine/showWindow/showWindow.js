@@ -13,7 +13,7 @@ export function ShowWindow() {
   const { logChoose, logDrop, logSoldOut } = useContext(LogContext);
   const { inProgress, setInProgress } = useContext(ProgressContext);
 
-  const clickItemBox = ({ target }) => {
+  const clickItemBox = async ({ target }) => {
     const id = target.dataset.id;
     if (id === undefined) return;
     if (inProgress) return;
@@ -21,8 +21,7 @@ export function ShowWindow() {
 
     setInProgress(true);
     target.dataset.click = 'true';
-    // TODO: 비동기 로직 분리
-    buyItem(id);
+    await buyItem(id);
     logChoose(itemList[id].name);
     setInputMoney(money => money - itemList[id].price);
     setTimeout(() => {

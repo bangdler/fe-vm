@@ -10,10 +10,9 @@ export function CoinBox({ coinInfo }) {
   const { setInputMoney } = useContext(InputMoneyContext);
   const { logInputMoney } = useContext(LogContext);
 
-  function handleClick() {
+  async function handleClick() {
     if (coinInfo.quantity > 0) {
-      // TODO: 비동기 로직 분리
-      decrementCoin(coinInfo.id, 1);
+      await decrementCoin(coinInfo.id, 1);
       setInputMoney(inputMoney => inputMoney + coinInfo.coin);
       logInputMoney(coinInfo.coin);
     }
