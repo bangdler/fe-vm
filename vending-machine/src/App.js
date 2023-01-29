@@ -23,7 +23,7 @@ function App() {
                 <ProgressProvider>
                   <PaybackTimerProvider>
                     <Routes>
-                      <Route path="/" element={<VendingMachine />} />
+                      <Route path={process.env.PUBLIC_URL} element={<VendingMachine />} />
                       <Route path="myWallet" element={<Wallet />} />
                     </Routes>
                   </PaybackTimerProvider>
